@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Midwest Dreamin' · Research Wall</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    [hidden]{display:none!important}
+    .tip-bar{
+      display:flex;align-items:center;gap:.75rem;
+      margin-top:.6rem;padding:.5rem .75rem;
+      background:rgba(96,165,250,.08);border:1px solid rgba(96,165,250,.2);
+      border-radius:7px;font-size:.77rem;color:var(--muted);line-height:1.5;
+    }
+    .tip-bar strong{color:var(--text)}
+    .tip-icon{font-size:1.1rem;flex-shrink:0}
+    :root{
+      --bg:#0F172A;--surface:#1E293B;--border:#334155;
+      --text:#F1F5F9;--muted:#94A3B8;
+      --q1-bg:#FDE68A;--q1-acc:#D97706;--q1-txt:#78350F;
+      --q2-bg:#BBF7D0;--q2-acc:#16A34A;--q2-txt:#14532D;
+      --q3-bg:#BAE6FD;--q3-acc:#0284C7;--q3-txt:#0C4A6E;
+    }
+    body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;min-height:100vh}
+    body::before{
+      content:'';position:fixed;inset:0;pointer-events:none;
+      background-image:radial-gradient(circle,rgba(255,255,255,.04) 1px,transparent 1px);
+      background-size:28px 28px;z-index:0;
+    }
+
+    /* ── Header ── */
+    .hdr{position:relative;z-index:1;padding:2.5rem 2rem 1.5rem;text-align:center}
+    .hdr-eyebrow{font-size:.75rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+    .hdr-title{
+      font-size:clamp(2rem,5vw,3.2rem);font-weight:900;line-height:1.1;
+      background:linear-gradient(135deg,#FDE68A 0%,#F472B6 50%,#60A5FA 100%);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    }
+    .hdr-sub{color:var(--muted);margin-top:.4rem;font-size:.95rem}
+    .hdr-badge{
+      display:inline-block;margin-top:.9rem;
+      background:var(--surface);border:1px solid var(--border);
+      border-radius:99px;padding:.3rem 1rem;font-size:.78rem;color:var(--muted);
+    }
+    .about-box{
+      display:inline-block;margin-top:1rem;text-align:left;
+      background:var(--surface);border:1px solid var(--border);border-radius:10px;
+      max-width:680px;width:90%;
+    }
+    .about-box summary{
+      padding:.55rem 1rem;font-size:.78rem;font-weight:800;color:var(--muted);
+      cursor:pointer;list-style:none;letter-spacing:.04em;
+    }
+    .about-box summary::-webkit-details-marker{display:none}
+    .about-box summary::before{content:'▶ ';font-size:.65rem}
+    .about-box[open] summary::before{content:'▼ '}
+    .about-body{
+      display:grid;grid-template-columns:1fr 1fr;gap:1rem;
+      padding:.25rem 1rem 1rem;border-top:1px solid var(--border);
+    }
+    .about-col{font-size:.78rem;color:var(--muted);line-height:1.6}
+    .about-col strong{display:block;color:var(--text);font-size:.8rem;margin-bottom:.4rem}
+    .about-col ul{padding-left:1.1rem}
+    .about-col em{color:var(--text);font-style:normal;font-weight:700}
+
+    /* ── Stats strip ── */
+    .stats{
+      position:relative;z-index:1;
+      display:flex;justify-content:center;align-items:stretch;
+      gap:0;padding:.5rem 2rem 1.5rem;flex-wrap:wrap;
+    }
+    .stat{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1rem 2.5rem;gap:.35rem}
+    .stat+.stat{border-left:1px solid var(--border)}
+    .stat-num{font-size:3.2rem;font-weight:900;line-height:1}
+    .stat-label{font-size:.72rem;font-weight:700;color:var(--muted);text-align:center;text-transform:uppercase;letter-spacing:.08em;max-width:130px;line-height:1.4}
+    .sn-stickies{background:linear-gradient(135deg,#FDE68A,#F59E0B);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .sn-stars{background:linear-gradient(135deg,#FCD34D,#F472B6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .sn-hours{background:linear-gradient(135deg,#60A5FA,#818CF8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .sn-funny{background:linear-gradient(135deg,#34D399,#6EE7B7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+    /* ── Controls ── */
+    .controls{
+      position:sticky;top:0;z-index:100;
+      background:rgba(15,23,42,.92);backdrop-filter:blur(14px);
+      border-bottom:1px solid var(--border);
+      padding:.75rem 1.5rem .6rem;
+    }
+    .theme-row{display:flex;gap:.35rem;flex-wrap:wrap;align-items:center;margin-bottom:.6rem}
+    .theme-label{font-size:.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;white-space:nowrap;margin-right:.15rem}
+    .tpill{
+      padding:.22rem .6rem;border-radius:99px;border:1.5px solid;
+      background:transparent;font-family:'Nunito',sans-serif;
+      font-size:.72rem;font-weight:800;cursor:pointer;transition:all .12s;
+    }
+    .tpill:hover{opacity:.75}
+    .tpill.tpill-on{color:#0F172A!important;border-color:transparent!important}
+    .bar{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
+    .srchwrap{position:relative;flex:1;min-width:150px}
+    .srchwrap span{position:absolute;left:.7rem;top:50%;transform:translateY(-50%);pointer-events:none;font-size:.85rem}
+    .srch{
+      width:100%;padding:.42rem .9rem .42rem 2.1rem;
+      background:var(--surface);border:1px solid var(--border);border-radius:8px;
+      color:var(--text);font-family:'Nunito',sans-serif;font-size:.85rem;outline:none;transition:border-color .15s;
+    }
+    .srch:focus{border-color:#60A5FA}
+    .srch::placeholder{color:var(--muted)}
+    .sortbtn{
+      padding:.42rem .9rem;background:var(--surface);border:1px solid var(--border);
+      border-radius:8px;color:var(--text);font-family:'Nunito',sans-serif;
+      font-size:.78rem;font-weight:800;cursor:pointer;transition:all .15s;white-space:nowrap;
+    }
+    .sortbtn:hover,.sortbtn.on{border-color:#FCD34D;color:#FCD34D}
+
+    /* ── Results info ── */
+    .rinfo{padding:.65rem 1.5rem .3rem;font-size:.78rem;color:var(--muted);position:relative;z-index:1}
+
+    /* ── Columns ── */
+    .columns{
+      position:relative;z-index:1;
+      display:grid;grid-template-columns:repeat(3,1fr);
+      gap:1.25rem;padding:.5rem 1.5rem 3rem;align-items:start;
+    }
+    .col{display:flex;flex-direction:column;gap:.85rem}
+    .col-hdr{
+      border-radius:10px;padding:1.25rem 1rem 1.1rem;
+      display:flex;flex-direction:column;align-items:center;text-align:center;gap:.45rem;
+      box-shadow:0 3px 10px rgba(0,0,0,.35);
+    }
+    .col-hdr-q1{background:#92400E;color:#FEF3C7;border-bottom:3px solid #D97706}
+    .col-hdr-q2{background:#14532D;color:#DCFCE7;border-bottom:3px solid #22C55E}
+    .col-hdr-q3{background:#0C4A6E;color:#E0F2FE;border-bottom:3px solid #38BDF8}
+    .col-emoji{font-size:1.9rem;line-height:1}
+    .col-qlabel{font-size:.95rem;font-weight:900;line-height:1.3}
+    .col-qcount{font-size:.72rem;font-weight:700;opacity:.65}
+    .col-cards{display:flex;flex-direction:column;gap:.9rem}
+    .col-empty{text-align:center;padding:2rem 1rem;color:var(--muted);font-size:.82rem}
+
+    /* ── Card ── */
+    .card{
+      border-radius:3px;padding:1rem 1rem .8rem;position:relative;
+      box-shadow:3px 4px 10px rgba(0,0,0,.45),0 1px 3px rgba(0,0,0,.2);
+      transition:transform .15s,box-shadow .15s;
+    }
+    .card:hover{box-shadow:6px 8px 20px rgba(0,0,0,.55);z-index:10;position:relative}
+    .card-q1{background:var(--q1-bg);color:var(--q1-txt)}
+    .card-q2{background:var(--q2-bg);color:var(--q2-txt)}
+    .card-q3{background:var(--q3-bg);color:var(--q3-txt)}
+    .card-resp{font-size:.86rem;font-weight:600;line-height:1.55;margin-bottom:.7rem}
+    .card-resp mark{background:rgba(251,191,36,.55);color:inherit;border-radius:2px;padding:0 1px}
+    .card-foot{display:flex;justify-content:space-between;align-items:flex-end;gap:.4rem;flex-wrap:wrap}
+    .card-tags{display:flex;gap:.25rem;flex-wrap:wrap;flex:1}
+    .ctag{font-size:.62rem;font-weight:800;padding:.14rem .42rem;border-radius:99px;opacity:.85}
+    .stars{
+      display:flex;align-items:center;gap:.2rem;
+      font-size:.78rem;font-weight:900;white-space:nowrap;
+      padding:.18rem .45rem;border-radius:99px;background:rgba(0,0,0,.12);
+    }
+
+    /* ── Comment button ── */
+    .comment-btn{
+      background:rgba(0,0,0,.13);border:none;border-radius:6px;
+      padding:.18rem .45rem;cursor:pointer;font-size:.75rem;
+      opacity:.6;transition:opacity .15s,background .15s;flex-shrink:0;
+    }
+    .comment-btn:hover{opacity:1;background:rgba(0,0,0,.25)}
+
+    /* ── Side panel ── */
+    .panel-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;cursor:pointer}
+    .panel-overlay[hidden]{display:none}
+    .side-panel{
+      position:fixed;top:0;right:0;width:420px;max-width:100vw;height:100vh;
+      background:var(--surface);border-left:1px solid var(--border);
+      z-index:201;display:flex;flex-direction:column;
+      transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);
+      box-shadow:-4px 0 24px rgba(0,0,0,.45);
+    }
+    .side-panel.open{transform:translateX(0)}
+    .panel-hdr{
+      display:flex;align-items:flex-start;gap:.75rem;
+      padding:1rem 1rem .8rem;border-bottom:1px solid var(--border);flex-shrink:0;
+    }
+    .panel-hdr-info{flex:1;min-width:0}
+    .panel-hdr-eyebrow{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:.3rem}
+    .panel-hdr-quote{
+      font-size:.82rem;font-weight:600;color:var(--text);line-height:1.45;
+      display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+    }
+    .panel-close{
+      background:transparent;border:none;color:var(--muted);
+      font-size:1rem;cursor:pointer;padding:.2rem .35rem;
+      border-radius:4px;flex-shrink:0;transition:color .15s;line-height:1;
+    }
+    .panel-close:hover{color:var(--text)}
+    .panel-frame{flex:1;border:none;width:100%;background:#fff}
+    .panel-setup{
+      flex:1;display:flex;align-items:center;justify-content:center;
+      padding:2rem;text-align:center;color:var(--muted);font-size:.82rem;line-height:1.7;
+    }
+    .panel-setup code{
+      background:rgba(255,255,255,.08);padding:.1rem .35rem;
+      border-radius:4px;font-family:monospace;font-size:.75rem;
+    }
+
+    /* ── Spectrum ── */
+    .spectrum-section{position:relative;z-index:1;padding:.5rem 1.5rem 1.25rem;text-align:center}
+    .spectrum-hed{font-size:1rem;font-weight:900;color:var(--text);margin-bottom:.15rem}
+    .spectrum-sub{font-size:.73rem;color:var(--muted);margin-bottom:.9rem}
+    .spectrum-wrap{max-width:960px;margin:0 auto}
+    .spectrum-bar{
+      position:relative;height:90px;border-radius:8px;overflow:hidden;
+      background:linear-gradient(to right,#EDE9FE 0%,#A78BFA 30%,#6D28D9 60%,#2E1065 85%,#0F172A 100%);
+      box-shadow:0 2px 16px rgba(0,0,0,.4);
+    }
+    .spec-star{
+      position:absolute;font-size:.7rem;line-height:1;
+      transform:translate(-50%,-50%);
+      cursor:default;user-select:none;pointer-events:none;
+    }
+    .spectrum-labels{display:flex;justify-content:space-between;margin-top:.55rem}
+    .spec-label{font-size:.7rem;font-weight:800;color:var(--muted);line-height:1.5;text-align:left}
+    .spec-label-right{text-align:right}
+
+    @media(max-width:750px){
+      .hdr{padding:1.75rem 1rem 1rem}
+      .columns{grid-template-columns:1fr;padding:.4rem 1rem 2rem}
+      .controls{padding:.6rem 1rem .5rem}
+      .rinfo{padding:.5rem 1rem .2rem}
+      .about-body{grid-template-columns:1fr}
+      .stat{padding:.75rem 1.25rem}
+      .stat-num{font-size:2.4rem}
+      .stat+.stat{border-left:none;border-top:1px solid var(--border)}
+    }
+  </style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-eyebrow">✦ Midwest Dreamin' &nbsp;·&nbsp; Minneapolis &nbsp;·&nbsp; July 2026 ✦</div>
+  <h1 class="hdr-title">Research Wall</h1>
+  <div class="hdr-sub">How prepared are customers for the changing future of CRM?</div>
+  <div class="hdr-badge" id="total-badge"></div>
+  <details class="about-box">
+    <summary>About this research</summary>
+    <div class="about-body">
+      <div class="about-col">
+        <strong>Learning Goals</strong>
+        <ul>
+          <li>How prepared do customers feel for the changing future of CRM?</li>
+          <li>How can Salesforce equip them for what's next — product functionality, data ecosystem, and beyond?</li>
+          <li>Source participants for ongoing research throughout the year</li>
+        </ul>
+      </div>
+      <div class="about-col">
+        <strong>Guiding Principles</strong>
+        <ul>
+          <li><em>Reciprocity</em> — Participants' voices will shape our product development</li>
+          <li><em>Learning</em> — We learn from customers; they learn from each other</li>
+          <li><em>Inspiration</em> — Participants are energized to imagine the future of their business with Salesforce</li>
+        </ul>
+      </div>
+    </div>
+  </details>
+</header>
+
+<section class="stats">
+  <div class="stat">
+    <span class="stat-num sn-stickies">87</span>
+    <span class="stat-label">sticky notes collected</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num sn-stars" id="stat-stars">—</span>
+    <span class="stat-label">total upvotes cast</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num sn-hours">22</span>
+    <span class="stat-label">hours the activation ran</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num sn-funny">0</span>
+    <span class="stat-label">participants who said their data was already clean 😇</span>
+  </div>
+</section>
+
+<section class="spectrum-section">
+  <div class="spectrum-hed">How prepared do you feel for the Agentic Enterprise?</div>
+  <div class="spectrum-sub">~58 star stickers placed by conference attendees on a physical spectrum</div>
+  <div class="spectrum-wrap">
+    <div class="spectrum-bar" id="spectrum-bar"></div>
+    <div class="spectrum-labels">
+      <span class="spec-label">← SLOW DOWN<br>"I feel left behind"</span>
+      <span class="spec-label spec-label-right">BRING IT ON →<br>"I feel ready"</span>
+    </div>
+  </div>
+</section>
+
+<div class="controls">
+  <div class="theme-row" id="theme-row">
+    <span class="theme-label">Themes:</span>
+  </div>
+  <div class="bar">
+    <div class="srchwrap">
+      <span>🔍</span>
+      <input class="srch" id="srch" type="text" placeholder="Search responses…">
+    </div>
+    <button class="sortbtn" id="sortbtn">Original order ↕</button>
+  </div>
+  <div class="tip-bar">
+    <span class="tip-icon">💬</span>
+    <span>Each sticky note has a <strong>comment button</strong> — use it to reflect on the feedback or send questions and thoughts directly to <strong>@aalberts</strong>.</span>
+  </div>
+</div>
+
+<div class="rinfo" id="rinfo"></div>
+
+<div class="columns">
+  <div class="col">
+    <div class="col-hdr col-hdr-q1">
+      <span class="col-emoji">😅</span>
+      <div class="col-qlabel">What's holding you back?</div>
+      <div class="col-qcount"><span id="count-q1">—</span> responses</div>
+    </div>
+    <div class="col-cards" id="col-q1"></div>
+  </div>
+  <div class="col">
+    <div class="col-hdr col-hdr-q2">
+      <span class="col-emoji">🚀</span>
+      <div class="col-qlabel">What would accelerate you?</div>
+      <div class="col-qcount"><span id="count-q2">—</span> responses</div>
+    </div>
+    <div class="col-cards" id="col-q2"></div>
+  </div>
+  <div class="col">
+    <div class="col-hdr col-hdr-q3">
+      <span class="col-emoji">🎯</span>
+      <div class="col-qlabel">What does ready look like to you?</div>
+      <div class="col-qcount"><span id="count-q3">—</span> responses</div>
+    </div>
+    <div class="col-cards" id="col-q3"></div>
+  </div>
+</div>
+
+<div class="panel-overlay" id="panel-overlay" hidden></div>
+<aside class="side-panel" id="side-panel">
+  <div class="panel-hdr">
+    <div class="panel-hdr-info">
+      <div class="panel-hdr-eyebrow">Commenting on</div>
+      <div class="panel-hdr-quote" id="panel-quote"></div>
+    </div>
+    <button class="panel-close" id="panel-close" title="Close panel">✕</button>
+  </div>
+  <iframe class="panel-frame" id="panel-frame" title="Leave a comment"></iframe>
+  <div class="panel-setup" id="panel-setup" hidden>
+    ⚙️ To enable comments, open this file in a text editor,
+    find <code>FORM_URL</code> in the <code>&lt;script&gt;</code> block,
+    and paste in your Google Form's <em>viewform</em> URL.
+  </div>
+</aside>
+
+<script>
+// ── Google Form config ────────────────────────────────────────────────────────
+// 1. Create a Google Form with a paragraph field for "Context" and one for "Comment"
+// 2. In the form editor: ⋮ → Get pre-filled link → fill the Context field → Get link
+// 3. From that URL, copy the entry ID (looks like entry.1234567890) for the Context field
+// 4. Paste both values below
+const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSe3BxZj1075HD67uOxG7Oe3uu1ej5_jkXJI0Nyr24ZrxRaLlg/viewform';
+const FORM_CONTEXT_ENTRY = 'entry.854260102';
+// ─────────────────────────────────────────────────────────────────────────────
+
+const ROTS = [-2, 1.2, -1, 1.8, -1.5, 0.6, -0.8, 2, -1.3, 0.9];
+
+const QMETA = {
+  q1: { label: "What's holding you back?",         cls: 'card-q1' },
+  q2: { label: "What would accelerate you?",        cls: 'card-q2' },
+  q3: { label: "What does ready look like to you?", cls: 'card-q3' },
+};
+
+const TAG_STYLE = {
+  "Cost & Budget":        { color:"#6D28D9", bg:"#EDE9FE", border:"#7C3AED" },
+  "Data Quality":         { color:"#C2410C", bg:"#FED7AA", border:"#EA580C" },
+  "Trust & Adoption":     { color:"#BE185D", bg:"#FCE7F3", border:"#DB2777" },
+  "Governance & Risk":    { color:"#B91C1C", bg:"#FEE2E2", border:"#DC2626" },
+  "Use Cases & ROI":      { color:"#92400E", bg:"#FEF3C7", border:"#D97706" },
+  "Product Direction":    { color:"#0E7490", bg:"#E0F2FE", border:"#0891B2" },
+  "Environmental Impact": { color:"#166534", bg:"#DCFCE7", border:"#16A34A" },
+};
+
+const DATA = [
+  // ── Q1: What's holding you back? ─────────────────────────────────────────
+  {id:1,  q:'q1', stars:0, tags:['Cost & Budget'],
+   response:`Organization not willing to pay under current pricing model equals not enough opportunity to gain practical experience`},
+  {id:2,  q:'q1', stars:0, tags:['Governance & Risk','Data Quality'],
+   response:`Agent sharing or updating records and data they shouldn't, creating more bad or duplicate data`},
+  {id:3,  q:'q1', stars:0, tags:['Cost & Budget','Use Cases & ROI'],
+   response:`Cost/ROI`},
+  {id:4,  q:'q1', stars:3, tags:['Trust & Adoption'],
+   response:`User adoption/change management`},
+  {id:5,  q:'q1', stars:1, tags:[],
+   response:`Time to learn. It is a large curve.`},
+  {id:6,  q:'q1', stars:0, tags:['Use Cases & ROI'],
+   response:`We need to formulate use cases first to understand what problems we'd need to solve; cost may be a factor but unsure what that looks like`},
+  {id:7,  q:'q1', stars:0, tags:[],
+   response:`Resources — that includes people's time to learn AI and people's time to structure and clean our data`},
+  {id:8,  q:'q1', stars:1, tags:['Use Cases & ROI'],
+   response:`Knowledge from stakeholders — they want magic, but we need real use cases that can give ROI`},
+  {id:9,  q:'q1', stars:1, tags:['Cost & Budget','Product Direction'],
+   response:`Cost — so many options, not knowing which to choose; hard to keep up`},
+  {id:10, q:'q1', stars:0, tags:['Data Quality'],
+   response:`Data quality`},
+  {id:11, q:'q1', stars:0, tags:['Governance & Risk'],
+   response:`Access within a large enterprise org — often over-sharing data`},
+  {id:12, q:'q1', stars:3, tags:['Trust & Adoption'],
+   response:`Trust in results provided by agents — tried to ask about my opportunities with our implementation, but it gave me the wrong results`},
+  {id:13, q:'q1', stars:0, tags:['Cost & Budget','Trust & Adoption'],
+   response:`Working as part of a nonprofit, it is hard to create buy-in from our higher execs to push for our move to an AI-focused approach to our database systems. It is currently cost-prohibitive.`},
+  {id:14, q:'q1', stars:1, tags:['Governance & Risk'],
+   response:`Governance`},
+  {id:15, q:'q1', stars:0, tags:['Governance & Risk'],
+   response:`Guard rails`},
+  {id:16, q:'q1', stars:2, tags:['Data Quality','Trust & Adoption'],
+   response:`Lack of unified data and shared vision and urgency to be able to deploy AI agents in a meaningful way`},
+  {id:17, q:'q1', stars:0, tags:['Use Cases & ROI'],
+   response:`Seeing other customers' use cases`},
+  {id:18, q:'q1', stars:3, tags:['Environmental Impact'],
+   response:`Concern for the environmental impact of AI — "can" does not mean "should"`},
+  {id:19, q:'q1', stars:0, tags:['Governance & Risk'],
+   response:`Government regulation/risks and abuse`},
+  {id:20, q:'q1', stars:0, tags:['Cost & Budget'],
+   response:`Money`},
+  {id:21, q:'q1', stars:0, tags:['Data Quality'],
+   response:`Data quality`},
+  {id:22, q:'q1', stars:0, tags:['Trust & Adoption'],
+   response:`Unrealistic expectations from leadership`},
+  {id:23, q:'q1', stars:0, tags:['Use Cases & ROI'],
+   response:`Not sure where it will help me in my role`},
+  {id:24, q:'q1', stars:1, tags:['Cost & Budget'],
+   response:`Money`},
+  {id:25, q:'q1', stars:2, tags:['Data Quality'],
+   response:`Bad data`},
+  {id:26, q:'q1', stars:0, tags:['Cost & Budget'],
+   response:`Budget`},
+  {id:27, q:'q1', stars:0, tags:[],
+   response:`Resources`},
+  {id:28, q:'q1', stars:0, tags:['Trust & Adoption'],
+   response:`Direction — internal alignment`},
+  {id:29, q:'q1', stars:0, tags:[],
+   response:`Knowledge`},
+  {id:30, q:'q1', stars:0, tags:['Trust & Adoption'],
+   response:`No one is on the same page, but speak like they are`},
+  {id:31, q:'q1', stars:0, tags:['Trust & Adoption'],
+   response:`Sales and marketing versus developers versus leadership`},
+  {id:32, q:'q1', stars:1, tags:['Use Cases & ROI','Trust & Adoption'],
+   response:`We need to align on what outcome we want and how to get there`},
+  {id:33, q:'q1', stars:0, tags:['Cost & Budget'],
+   response:`Cost and certainty around pricing`},
+  {id:34, q:'q1', stars:0, tags:['Data Quality'],
+   response:`Dirty data — need to get that in shape`},
+  {id:35, q:'q1', stars:0, tags:['Use Cases & ROI'],
+   response:`Not sure about use case; hard to measure value and ROI`},
+  {id:36, q:'q1', stars:0, tags:['Product Direction'],
+   response:`Providing more options with Data Cloud integration, retrievers`},
+  {id:37, q:'q1', stars:0, tags:[],
+   response:`Example that slowed a recent project: SharePoint integration ignores files older than one year and only looks at files in the root directory. These were blockers so we had to load via Data Cloud.`},
+  {id:38, q:'q1', stars:0, tags:[],
+   response:`Time`},
+  {id:39, q:'q1', stars:0, tags:['Cost & Budget'],
+   response:`Budget`},
+  {id:40, q:'q1', stars:0, tags:[],
+   response:`Training`},
+  {id:41, q:'q1', stars:0, tags:['Trust & Adoption'],
+   response:`User resistance to change`},
+  {id:42, q:'q1', stars:0, tags:['Trust & Adoption'],
+   response:`User lack of trust in AI generally`},
+  {id:43, q:'q1', stars:2, tags:['Governance & Risk'],
+   response:`Concerns about security/government contracts`},
+  {id:44, q:'q1', stars:0, tags:['Product Direction'],
+   response:`The products are changing faster than people can learn them`},
+  {id:45, q:'q1', stars:1, tags:['Product Direction'],
+   response:`Marketing renaming products and spending more money on marketing than on product`},
+  {id:46, q:'q1', stars:1, tags:['Product Direction'],
+   response:`Renaming products when there is no significant change to the product`},
+  {id:47, q:'q1', stars:0, tags:[],
+   response:`We're building agents outside of Salesforce, but they'll need to integrate with Salesforce`},
+  {id:48, q:'q1', stars:1, tags:['Governance & Risk'],
+   response:`How to solve for fine-grained access control to Salesforce data/perm/API/MCP tools, per agent`},
+  {id:49, q:'q1', stars:0, tags:['Governance & Risk'],
+   response:`Since we're not and won't be using Salesforce, is it even feasible to have agents running outside Salesforce and hitting APIs? Concerns around API usage, integration user license sprawl, and maintenance/governance`},
+
+  // ── Q2: What would accelerate you? ───────────────────────────────────────
+  {id:50, q:'q2', stars:0, tags:['Use Cases & ROI'],
+   response:`Sales focuses on in-the-moment feedback — my sales reps have face-to-face conversations and will not be providing information in real time. I need an assistant to help them with admin tasks after a visit. Talk into a long text field and have the agent do tasks based on that text: add/update products, create visions and opportunities, create tasks.`},
+  {id:51, q:'q2', stars:3, tags:['Trust & Adoption','Data Quality'],
+   response:`Trust in data/output and buy-in from the entire team`},
+  {id:52, q:'q2', stars:1, tags:['Use Cases & ROI'],
+   response:`We need to shift away from "you need AI" to "what problems do you have? Maybe AI can help"`},
+  {id:53, q:'q2', stars:1, tags:['Governance & Risk','Trust & Adoption'],
+   response:`Transparency and agency in the agentic transformation — I work for a nonprofit university; records being deleted or improper stewardship of data not only raises concerns about FERPA but also creates accreditation audit risks, as maintaining these records is very much a requirement`},
+  {id:54, q:'q2', stars:0, tags:[],
+   response:`Salesforce helping with complex custom logic where our business rules and processes are not obvious from looking at objects and flows — how to handle business rules and documentation; if I work with Agentforce, there would be so much I would have to teach about how the work actually works`},
+  {id:55, q:'q2', stars:2, tags:['Product Direction'],
+   response:`Transparency on what is on Salesforce's roadmap for AI would be great`},
+  {id:56, q:'q2', stars:3, tags:['Product Direction'],
+   response:`Moving targets — Salesforce keeps making major changes that force us to rethink or rebuild our agent. It's great to continually improve, but we need a solid foundation to build on.`},
+  {id:57, q:'q2', stars:0, tags:['Product Direction'],
+   response:`Make the filters in CRM dashboards dynamic`},
+  {id:58, q:'q2', stars:0, tags:[],
+   response:`A time machine plus a pause button to learn and get ready — a "for dummies" guide, tools to get ready like the Lightning Readiness checker`},
+  {id:59, q:'q2', stars:1, tags:['Use Cases & ROI'],
+   response:`A "killer use case" — a specific, distinct value proposition that will compel users to adopt`},
+  {id:60, q:'q2', stars:0, tags:['Use Cases & ROI'],
+   response:`The value add — why should we adopt? ROI?`},
+  {id:61, q:'q2', stars:0, tags:['Product Direction'],
+   response:`Make it easy to configure UX/UI`},
+  {id:62, q:'q2', stars:1, tags:['Use Cases & ROI'],
+   response:`A real use case that adds real value`},
+  {id:63, q:'q2', stars:0, tags:['Data Quality'],
+   response:`De-dupe system — garbage in, garbage out makes AI useless`},
+  {id:64, q:'q2', stars:0, tags:['Trust & Adoption'],
+   response:`Apex/Flow is a new language for our .NET devs and they have rejected it — Agent is adding to that`},
+  {id:65, q:'q2', stars:0, tags:['Trust & Adoption'],
+   response:`Agentforce is a toddler and must be trained, guided, and grounded. Our team does not have the patience or want to invest this.`},
+  {id:66, q:'q2', stars:2, tags:['Environmental Impact'],
+   response:`Acknowledgment and transparency from Salesforce specifically about doing work to mitigate ethical and environmental impacts of Gen AI, especially on local communities`},
+  {id:67, q:'q2', stars:0, tags:['Trust & Adoption'],
+   response:`Clearer, well-defined AI that can be fine-tuned without the black-box LLM limitations that make output untrustworthy`},
+  {id:68, q:'q2', stars:0, tags:['Cost & Budget','Product Direction'],
+   response:`Tiers of feature availability — I don't want to pay for features we will never use`},
+  {id:69, q:'q2', stars:0, tags:['Environmental Impact'],
+   response:`Clearly demonstrate how you will offset environmental costs`},
+  {id:70, q:'q2', stars:0, tags:['Product Direction'],
+   response:`Less emphasis on agents overall — it honestly comes off as if the rest of the platform no longer matters to Salesforce`},
+
+  // ── Q3: What does ready look like to you? ────────────────────────────────
+  {id:71, q:'q3', stars:2, tags:['Trust & Adoption','Governance & Risk'],
+   response:`Ready is when I feel the risks are known, and I can accept them`},
+  {id:72, q:'q3', stars:0, tags:['Use Cases & ROI'],
+   response:`Ready looks like I have an idea, and I conceptualize it — even if the change is a small one, the idea is fully able to solve the problem`},
+  {id:73, q:'q3', stars:1, tags:['Use Cases & ROI'],
+   response:`When we have a clear idea of what we want the agent to achieve — not just "do more, faster." Need to answer: what's the point?`},
+  {id:74, q:'q3', stars:0, tags:['Use Cases & ROI'],
+   response:`My manager would say 85% of all activities in Salesforce can be done by an agent`},
+  {id:75, q:'q3', stars:2, tags:['Trust & Adoption','Data Quality'],
+   response:`Users are knowledgeable and informed and trust the AI — this requires good data`},
+  {id:76, q:'q3', stars:1, tags:['Use Cases & ROI'],
+   response:`Salesforce development and request intake has AI involved in every part of the process: testing, review, training, etc.`},
+  {id:77, q:'q3', stars:0, tags:['Data Quality'],
+   response:`Data flowing accurately and consistently`},
+  {id:78, q:'q3', stars:0, tags:['Data Quality'],
+   response:`Complete data`},
+  {id:79, q:'q3', stars:1, tags:['Use Cases & ROI'],
+   response:`Business process defined`},
+  {id:80, q:'q3', stars:1, tags:['Trust & Adoption'],
+   response:`Success is when our users are using AI frequently. AI has minimal hallucinations and is truly helping users have better work-life quality and productivity.`},
+  {id:81, q:'q3', stars:0, tags:['Use Cases & ROI'],
+   response:`Success for us is having a system that allows my sales reps to open Slack or Salesforce on their phone, look at their day, work their day, and finish their day.`},
+  {id:82, q:'q3', stars:0, tags:['Use Cases & ROI'],
+   response:`When a sales rep finishes a visit, I want them to go to their car, complete their visit notes, and from those notes have automated actions: (1) add/update products on associated opportunity, (2) create a new opportunity, (3) create a new visit, (4) create specific follow-up tasks.`},
+  {id:83, q:'q3', stars:2, tags:['Product Direction'],
+   response:`I don't really know — it feels like the term "agentic" is marketing-speak without clarity about what that really means. Need to define that better to conceptualize what success looks like.`},
+  {id:84, q:'q3', stars:0, tags:[],
+   response:`Loved the hot sessions at TDX and Dreamforce`},
+  {id:85, q:'q3', stars:0, tags:[],
+   response:`Love the Trailhead Academy workshops, especially Andrew and Christina`},
+  {id:86, q:'q3', stars:0, tags:['Product Direction'],
+   response:`Agent interface using simple text`},
+  {id:87, q:'q3', stars:0, tags:['Trust & Adoption'],
+   response:`Mindset shift is needed — AI should be a collaborative teammate`},
+];
+
+// ── Spectrum data (positions estimated from photo, x=0 left/behind → 100 right/ready) ──
+const SPECTRUM_STARS = [
+  // Far left cluster — 6 stars
+  {x:2,y:35},{x:4,y:62},{x:5,y:28},{x:7,y:50},{x:8,y:72},{x:9,y:40},
+  // Left zone — 12 stars
+  {x:11,y:55},{x:12,y:30},{x:13,y:68},{x:14,y:45},{x:15,y:22},
+  {x:16,y:60},{x:17,y:38},{x:18,y:75},{x:19,y:50},{x:20,y:28},{x:21,y:65},{x:22,y:42},
+  // Left-centre — 12 stars
+  {x:23,y:30},{x:24,y:58},{x:25,y:72},{x:26,y:35},{x:27,y:52},{x:28,y:25},
+  {x:29,y:68},{x:30,y:45},{x:31,y:30},{x:32,y:62},{x:33,y:48},{x:34,y:22},
+  // Centre-left — 8 stars
+  {x:36,y:55},{x:37,y:32},{x:38,y:70},{x:40,y:40},{x:41,y:58},{x:43,y:28},{x:45,y:65},{x:46,y:42},
+  // Centre — 5 stars
+  {x:48,y:35},{x:50,y:60},{x:52,y:25},{x:54,y:72},{x:55,y:48},
+  // Centre-right — 5 stars
+  {x:58,y:38},{x:60,y:62},{x:62,y:30},{x:63,y:55},{x:65,y:70},
+  // Right — 6 stars
+  {x:68,y:40},{x:70,y:28},{x:72,y:65},{x:74,y:48},{x:76,y:32},{x:78,y:60},
+  // Far right — 4 stars
+  {x:82,y:45},{x:86,y:68},{x:90,y:30},{x:95,y:55},
+];
+
+const STAR_COLORS = ['#FCD34D','#FDE68A','#FFFFFF','#E2E8F0','#FCD34D','#F9A8D4'];
+
+function renderSpectrum(){
+  const bar = document.getElementById('spectrum-bar');
+  SPECTRUM_STARS.forEach((s, i) => {
+    const el = document.createElement('span');
+    el.className = 'spec-star';
+    el.textContent = '★';
+    el.style.left = s.x + '%';
+    el.style.top = s.y + '%';
+    el.style.color = STAR_COLORS[i % STAR_COLORS.length];
+    bar.appendChild(el);
+  });
+}
+
+// ── State ─────────────────────────────────────────────────────────────────────
+const state = { tags: [], search: '', sorted: false };
+
+// ── Derived ───────────────────────────────────────────────────────────────────
+const ALL_TAGS = [...new Set(DATA.flatMap(d => d.tags))].sort();
+const TOTAL = DATA.length;
+const TOTAL_STARS = DATA.reduce((s, d) => s + d.stars, 0);
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') }
+function highlight(text, q){
+  const safe = esc(text);
+  if(!q || q.length < 2) return safe;
+  const re = new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi');
+  return safe.replace(re, '<mark>$1</mark>');
+}
+function getVisible(){
+  let items = DATA.slice();
+  if(state.tags.length > 0) items = items.filter(d => state.tags.some(t => d.tags.includes(t)));
+  if(state.search.length >= 2){
+    const s = state.search.toLowerCase();
+    items = items.filter(d => d.response.toLowerCase().includes(s));
+  }
+  if(state.sorted) items.sort((a,b) => b.stars - a.stars || a.id - b.id);
+  return items;
+}
+
+// ── Render ────────────────────────────────────────────────────────────────────
+function cardHtml(d){
+  const rot = ROTS[d.id % ROTS.length];
+  const qcls = QMETA[d.q].cls;
+  const respHtml = highlight(d.response, state.search);
+  const tagHtml = d.tags.map(t => {
+    const s = TAG_STYLE[t] || {};
+    return `<span class="ctag" style="background:${s.bg};color:${s.color};border:1px solid ${s.border}">${esc(t)}</span>`;
+  }).join('');
+  const starHtml = d.stars > 0 ? `<span class="stars">⭐ ${d.stars}</span>` : '';
+  return `<div class="card ${qcls}" style="transform:rotate(${rot}deg)">
+  <div class="card-resp">${respHtml}</div>
+  <div class="card-foot">
+    <div class="card-tags">${tagHtml}</div>
+    <div style="display:flex;align-items:center;gap:.35rem;flex-shrink:0">
+      ${starHtml}
+      <button class="comment-btn" data-id="${d.id}" title="Comment on this sticky">💬</button>
+    </div>
+  </div>
+</div>`;
+}
+
+function render(){
+  const visible = getVisible();
+  const byQ = {q1:[], q2:[], q3:[]};
+  visible.forEach(d => byQ[d.q].push(d));
+
+  ['q1','q2','q3'].forEach(q => {
+    const items = byQ[q];
+    document.getElementById(`count-${q}`).textContent = items.length;
+    document.getElementById(`col-${q}`).innerHTML = items.length
+      ? items.map(cardHtml).join('')
+      : '<div class="col-empty">No matches</div>';
+  });
+
+  const total = visible.length;
+  document.getElementById('rinfo').textContent = total === TOTAL
+    ? `${TOTAL} responses`
+    : `Showing ${total} of ${TOTAL} responses`;
+}
+
+// ── Side panel ────────────────────────────────────────────────────────────────
+function openPanel(id) {
+  const card = DATA.find(d => d.id === id);
+  if (!card) return;
+
+  const quoteEl = document.getElementById('panel-quote');
+  while (quoteEl.firstChild) quoteEl.removeChild(quoteEl.firstChild);
+  quoteEl.appendChild(document.createTextNode(card.response));
+
+  const frame = document.getElementById('panel-frame');
+  const setup = document.getElementById('panel-setup');
+
+  if (FORM_URL) {
+    const context = QMETA[card.q].label + ' → ' + card.response;
+    let src = FORM_URL + '?embedded=true';
+    if (FORM_CONTEXT_ENTRY) src += '&' + FORM_CONTEXT_ENTRY + '=' + encodeURIComponent(context);
+    frame.src = src;
+    frame.hidden = false;
+    setup.hidden = true;
+  } else {
+    frame.src = 'about:blank';
+    frame.hidden = true;
+    setup.hidden = false;
+  }
+
+  document.getElementById('panel-overlay').hidden = false;
+  document.getElementById('side-panel').classList.add('open');
+}
+
+function closePanel() {
+  document.getElementById('side-panel').classList.remove('open');
+  document.getElementById('panel-overlay').hidden = true;
+  setTimeout(() => { document.getElementById('panel-frame').src = 'about:blank'; }, 320);
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+function init(){
+  renderSpectrum();
+  document.getElementById('total-badge').textContent = `${TOTAL} sticky notes · 3 research questions`;
+  document.getElementById('stat-stars').textContent = TOTAL_STARS;
+
+  // Side panel
+  document.getElementById('panel-close').addEventListener('click', closePanel);
+  document.getElementById('panel-overlay').addEventListener('click', closePanel);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closePanel(); });
+  document.querySelector('.columns').addEventListener('click', e => {
+    const btn = e.target.closest('.comment-btn');
+    if (btn) openPanel(parseInt(btn.dataset.id, 10));
+  });
+
+  // Theme pills
+  const themeRow = document.getElementById('theme-row');
+  ALL_TAGS.forEach(tag => {
+    const s = TAG_STYLE[tag] || {};
+    const btn = document.createElement('button');
+    btn.className = 'tpill';
+    btn.dataset.tag = tag;
+    btn.textContent = tag;
+    btn.style.color = s.color;
+    btn.style.borderColor = s.border;
+    btn.addEventListener('click', () => {
+      const idx = state.tags.indexOf(tag);
+      if(idx >= 0){ state.tags.splice(idx,1); btn.classList.remove('tpill-on'); btn.style.background=''; btn.style.color=s.color; btn.style.borderColor=s.border; }
+      else { state.tags.push(tag); btn.classList.add('tpill-on'); btn.style.background=s.bg; btn.style.color=s.color; btn.style.borderColor='transparent'; }
+      render();
+    });
+    themeRow.appendChild(btn);
+  });
+
+  // Search
+  let debounce;
+  document.getElementById('srch').addEventListener('input', e => {
+    clearTimeout(debounce);
+    debounce = setTimeout(() => { state.search = e.target.value.trim(); render(); }, 150);
+  });
+
+  // Sort
+  document.getElementById('sortbtn').addEventListener('click', () => {
+    state.sorted = !state.sorted;
+    const btn = document.getElementById('sortbtn');
+    btn.textContent = state.sorted ? '⭐ Highest stars first' : 'Original order ↕';
+    btn.classList.toggle('on', state.sorted);
+    render();
+  });
+
+  render();
+}
+
+init();
+</script>
+</body>
+</html>
