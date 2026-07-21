@@ -229,6 +229,20 @@
     .spec-label{font-size:.7rem;font-weight:800;color:var(--muted);line-height:1.5;text-align:left}
     .spec-label-right{text-align:right}
 
+    /* ── Themes chart ── */
+    .themes-section{padding:.75rem 1.5rem 1.5rem;border-top:1px solid var(--border)}
+    .themes-hed{font-size:1rem;font-weight:900;color:var(--text);margin:0 0 .2rem}
+    .themes-sub{font-size:.73rem;color:var(--muted);margin:0 0 1.1rem}
+    .themes-chart{display:flex;flex-direction:column;gap:.65rem}
+    .theme-row-wrap{display:grid;grid-template-columns:minmax(140px,22%) 1fr auto;align-items:center;gap:.6rem 1rem}
+    .theme-label{text-align:right}
+    .theme-name{font-size:.78rem;font-weight:800;color:var(--text);line-height:1.3}
+    .theme-entries{font-size:.65rem;color:var(--muted);margin-top:.1rem}
+    .theme-bar-track{position:relative;height:22px;background:rgba(255,255,255,.06);border-radius:5px;overflow:hidden}
+    .theme-bar-fill{height:100%;border-radius:5px;min-width:4px}
+    .theme-count{font-size:.82rem;font-weight:900;color:var(--text);white-space:nowrap}
+    .theme-count small{font-size:.65rem;font-weight:400;color:var(--muted);margin-left:.25rem}
+
     @media(max-width:750px){
       .hdr{padding:1.75rem 1rem 1rem}
       .columns{grid-template-columns:1fr;padding:.4rem 1rem 2rem}
@@ -302,6 +316,12 @@
       <span class="spec-label spec-label-right">BRING IT ON →<br>"I feel ready"</span>
     </div>
   </div>
+</section>
+
+<section class="themes-section" aria-labelledby="themes-heading">
+  <h2 id="themes-heading" class="themes-hed">Themes in upvoted sticky notes</h2>
+  <p class="themes-sub">Grouped by resonance — ranked by total community upvotes across all three questions</p>
+  <div class="themes-chart" id="themes-chart"></div>
 </section>
 
 <div class="controls">
@@ -743,6 +763,70 @@ function closePanel() {
   setTimeout(() => { document.getElementById('panel-frame').src = 'about:blank'; }, 320);
 }
 
+// ── Themes chart ─────────────────────────────────────────────────────────────
+const THEMES = [
+  { name:'Trust in AI outputs & org buy-in',
+    desc:'Accuracy of results, change management, knowing the risks before committing',
+    stars:14, entries:6, color:'#FCD34D' },
+  { name:'Salesforce platform stability & clarity',
+    desc:'Moving targets, roadmap transparency, product renaming, "agentic" as marketing-speak',
+    stars:10, entries:6, color:'#60A5FA' },
+  { name:'Use case clarity as a prerequisite',
+    desc:'Defined business process, killer use case, ROI justification before adoption',
+    stars:7,  entries:7, color:'#34D399' },
+  { name:'Environmental & ethical accountability',
+    desc:'"Can does not mean should" — mitigation, transparency, community impact',
+    stars:5,  entries:2, color:'#A78BFA' },
+  { name:'Data quality',
+    desc:'Bad or incomplete data undermines AI — a known blocker with low surprise factor',
+    stars:4,  entries:2, color:'#FB923C' },
+];
+
+function renderThemes(){
+  const chart = document.getElementById('themes-chart');
+  const maxStars = THEMES[0].stars;
+  THEMES.forEach(t => {
+    const row = document.createElement('div');
+    row.className = 'theme-row-wrap';
+
+    const label = document.createElement('div');
+    label.className = 'theme-label';
+    const name = document.createElement('div');
+    name.className = 'theme-name';
+    name.textContent = t.name;
+    const entries = document.createElement('div');
+    entries.className = 'theme-entries';
+    entries.textContent = `${t.entries} ${t.entries === 1 ? 'entry' : 'entries'}`;
+    label.appendChild(name);
+    label.appendChild(entries);
+
+    const track = document.createElement('div');
+    track.className = 'theme-bar-track';
+    track.title = t.desc;
+    const fill = document.createElement('div');
+    fill.className = 'theme-bar-fill';
+    fill.style.width = (t.stars / maxStars * 100) + '%';
+    fill.style.background = t.color;
+    fill.style.opacity = '.75';
+    track.appendChild(fill);
+
+    const count = document.createElement('div');
+    count.className = 'theme-count';
+    count.innerHTML = `⭐ ${t.stars}<small>upvotes</small>`;
+
+    row.appendChild(label);
+    row.appendChild(track);
+    row.appendChild(count);
+    chart.appendChild(row);
+
+    // description row
+    const desc = document.createElement('div');
+    desc.style.cssText = 'grid-column:2/4;font-size:.67rem;color:var(--muted);margin-top:-.3rem;padding-bottom:.15rem;line-height:1.5';
+    desc.textContent = t.desc;
+    chart.appendChild(desc);
+  });
+}
+
 // ── Init ──────────────────────────────────────────────────────────────────────
 function init(){
   function setControlsHeight() {
@@ -753,6 +837,7 @@ function init(){
   window.addEventListener('resize', setControlsHeight);
 
   renderSpectrum();
+  renderThemes();
   document.getElementById('total-badge').textContent = `${TOTAL} sticky notes · 3 research questions`;
   document.getElementById('stat-stars').textContent = TOTAL_STARS;
 
