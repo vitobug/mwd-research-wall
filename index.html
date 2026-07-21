@@ -10,7 +10,7 @@
     [hidden]{display:none!important}
     .tip-bar{
       display:flex;align-items:center;gap:.75rem;
-      margin-top:.6rem;padding:.5rem .75rem;
+      margin-top:.75rem;padding:.5rem .75rem;
       background:rgba(46,163,242,.08);border:1px solid rgba(46,163,242,.25);
       border-radius:7px;font-size:.77rem;color:var(--muted);line-height:1.5;
     }
@@ -107,8 +107,7 @@
     }
     .srch:focus{border-color:#2ea3f2}
     .srch::placeholder{color:var(--muted)}
-    .tip-bar .sortbtn{margin-left:auto;flex-shrink:0}
-    .sortbtn{
+    .sortbtn{order:1000;
       padding:.42rem .9rem;background:var(--surface);border:1px solid var(--border);
       border-radius:8px;color:var(--text);font-family:'Open Sans',sans-serif;
       font-size:.78rem;font-weight:800;cursor:pointer;transition:all .15s;white-space:nowrap;
@@ -340,10 +339,6 @@
       <span>🔍</span>
       <input class="srch" id="srch" type="text" placeholder="Search responses…" aria-label="Search responses">
     </div>
-  </div>
-  <div class="tip-bar">
-    <span class="tip-icon">💬</span>
-    <span>Each sticky note has a <strong>comment button</strong> — use it to reflect on the feedback or send questions and thoughts directly to <strong>@aalberts</strong>.</span>
     <button class="sortbtn" id="sortbtn">Original order ↕</button>
   </div>
 </div>
@@ -375,6 +370,11 @@
     </div>
     <div class="col-cards" id="col-q3"></div>
   </div>
+</div>
+
+<div class="tip-bar">
+  <span class="tip-icon">💬</span>
+  <span>Each sticky note has a <strong>comment button</strong> — use it to reflect on the feedback or send questions and thoughts directly to <strong>@aalberts</strong>.</span>
 </div>
 
 </main>
