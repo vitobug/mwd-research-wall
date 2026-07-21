@@ -216,6 +216,8 @@
       background:linear-gradient(to right,#EDE9FE 0%,#A78BFA 30%,#6D28D9 60%,#2E1065 85%,#0F172A 100%);
       box-shadow:0 2px 16px rgba(0,0,0,.4);
     }
+    .spec-marker{position:absolute;top:0;bottom:0;width:2px;transform:translateX(-50%);pointer-events:none;z-index:5}
+    .spec-marker-label{position:absolute;bottom:5px;font-size:clamp(.42rem,.8vw,.6rem);font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:#fff;white-space:nowrap;transform:translateX(-50%);pointer-events:none;z-index:6;text-shadow:0 1px 3px rgba(0,0,0,.8);background:rgba(0,0,0,.35);padding:1px 4px;border-radius:3px}
     .spec-star{
       position:absolute;font-size:clamp(.45rem,1.1vw,.8rem);line-height:1;
       transform:translate(-50%,-50%);
@@ -610,6 +612,31 @@ function renderSpectrum(){
     el.style.top = s.y + '%';
     el.style.color = palette[i % palette.length];
     bar.appendChild(el);
+  });
+
+  const xs = SPECTRUM_STARS.map(s => s.x);
+  const mean = xs.reduce((a, b) => a + b, 0) / xs.length;
+  const sortedXs = [...xs].sort((a, b) => a - b);
+  const mid = Math.floor(sortedXs.length / 2);
+  const median = sortedXs.length % 2 !== 0
+    ? sortedXs[mid]
+    : (sortedXs[mid - 1] + sortedXs[mid]) / 2;
+
+  [
+    { pct: median, label: 'median', color: 'rgba(253,211,77,.75)' },
+    { pct: mean,   label: 'mean',   color: 'rgba(255,255,255,.65)' }
+  ].forEach(m => {
+    const line = document.createElement('div');
+    line.className = 'spec-marker';
+    line.style.left = m.pct + '%';
+    line.style.background = m.color;
+    bar.appendChild(line);
+
+    const lbl = document.createElement('span');
+    lbl.className = 'spec-marker-label';
+    lbl.style.left = m.pct + '%';
+    lbl.textContent = m.label;
+    bar.appendChild(lbl);
   });
 }
 
