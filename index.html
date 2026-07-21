@@ -107,6 +107,7 @@
     }
     .srch:focus{border-color:#2ea3f2}
     .srch::placeholder{color:var(--muted)}
+    .tip-bar .sortbtn{margin-left:auto;flex-shrink:0}
     .sortbtn{
       padding:.42rem .9rem;background:var(--surface);border:1px solid var(--border);
       border-radius:8px;color:var(--text);font-family:'Open Sans',sans-serif;
@@ -335,17 +336,15 @@
 <div class="controls">
   <div class="theme-row" id="theme-row">
     <span class="theme-label">Themes:</span>
-  </div>
-  <div class="bar">
     <div class="srchwrap">
       <span>🔍</span>
       <input class="srch" id="srch" type="text" placeholder="Search responses…" aria-label="Search responses">
     </div>
-    <button class="sortbtn" id="sortbtn">Original order ↕</button>
   </div>
   <div class="tip-bar">
     <span class="tip-icon">💬</span>
     <span>Each sticky note has a <strong>comment button</strong> — use it to reflect on the feedback or send questions and thoughts directly to <strong>@aalberts</strong>.</span>
+    <button class="sortbtn" id="sortbtn">Original order ↕</button>
   </div>
 </div>
 
