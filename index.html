@@ -206,6 +206,10 @@
       border-radius:4px;font-family:monospace;font-size:.75rem;
     }
 
+    /* ── Section headers ── */
+    .section-hdr{padding:1.75rem 1.5rem .6rem;font-size:1.5rem;font-weight:900;color:var(--text);letter-spacing:-.02em;line-height:1}
+    .section-hdr::after{content:'';display:block;width:2rem;height:3px;background:#FFC21F;border-radius:2px;margin-top:.5rem}
+
     /* ── Spectrum ── */
     .spectrum-section{position:relative;z-index:1;padding:.5rem 0 1.25rem;text-align:center}
     .spectrum-hed{font-size:1rem;font-weight:900;color:var(--text);margin:0 0 .15rem;padding:0 1.5rem}
@@ -327,6 +331,8 @@
   </div>
 </section>
 
+<h2 class="section-hdr">Readiness Meter</h2>
+
 <section class="spectrum-section" aria-labelledby="spectrum-heading">
   <h2 id="spectrum-heading" class="spectrum-hed">How prepared do you feel for the Agentic Enterprise?</h2>
   <div class="spectrum-sub">61 star stickers placed by conference attendees on a physical spectrum</div>
@@ -339,12 +345,16 @@
   </div>
 </section>
 
+<h2 class="section-hdr">Community Themes</h2>
+
 <section class="themes-section" aria-labelledby="themes-heading">
   <h2 id="themes-heading" class="themes-hed">Themes in upvoted sticky notes</h2>
   <p class="themes-sub">Grouped by resonance — ranked by total community upvotes across all three questions</p>
   <p class="themes-tip">Click a bar to filter the sticky notes below to that theme. Click again to clear.</p>
   <div class="themes-chart" id="themes-chart"></div>
 </section>
+
+<h2 class="section-hdr">Feedback Explorer</h2>
 
 <div class="controls">
   <div class="theme-row" id="theme-row">
